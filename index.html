@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>DC Clothes Rack</title>
+
+  <!-- ESM imports (supabase + helper libs) -->
+  <script type="importmap">
+  {
+    "imports": {
+      "@supabase/supabase-js": "https://esm.sh/@supabase/supabase-js@2.36.0",
+      "dayjs": "https://esm.sh/dayjs@1.11.7"
+    }
+  }
+  </script>
+
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Intro white splash -->
+  <div id="splash" class="screen white-screen"> </div>
+
+  <!-- Main app (hidden until splash completes) -->
+  <div id="app" class="screen hidden">
+    <!-- Top 9:1 bar -->
+    <div id="topBar" class="top-bar">
+      <div id="topBarText">Welcome to DC clothes rack, Select your choice</div>
+    </div>
+
+    <!-- Scrollable content region with cards (9:9 each) -->
+    <main id="feed" class="feed"></main>
+  </div>
+
+  <!-- Upload screen (white) -->
+  <div id="uploadScreen" class="screen white-screen hidden upload-screen">
+    <div class="upload-header">upload</div>
+
+    <div class="upload-center">
+      <div id="uploadBox" class="upload-box">
+        <input id="fileInput" type="file" accept="image/*" style="display:none" />
+        <div id="uploadPreview" class="upload-preview">Click to choose</div>
+      </div>
+
+      <input id="captionInput" class="caption-input" placeholder="Add caption..." maxlength="200" />
+
+      <button id="confirmBtn" class="confirm-btn hidden">confirm</button>
+      <div id="uploadStatus" class="upload-status"></div>
+    </div>
+  </div>
+
+  <!-- Fullscreen viewer modal -->
+  <div id="fullView" class="fullview hidden" aria-hidden="true">
+    <button id="fullBack" class="full-back" aria-label="Back">⟨</button>
+    <div class="full-image-wrap">
+      <img id="fullImg" src="" alt="full view" />
+      <div id="fullCaption" class="full-caption"></div>
+    </div>
+    <button id="saveBtn" class="save-btn">Save</button>
+  </div>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
