@@ -1,0 +1,491 @@
+:root{
+  --gap:12px;
+  --bg: #ffffff;
+  --muted:#666;
+  --accent:#111;
+}
+
+/* Page layout: single column mobile-first */
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;background:var(--bg);font-family:Inter,system-ui,Segoe UI,Roboto,-apple-system,'Helvetica Neue',Arial}
+.screen{position:relative;min-height:100vh;display:flex;flex-direction:column;align-items:stretch;justify-content:flex-start;background:#fff}
+.hidden{display:none}
+
+/* Splash */
+.white-screen{background:#fff}
+
+/* Top bar (9:1 ratio relative to width) */
+.top-bar{
+  width:100%;
+  aspect-ratio:9/1;
+  background:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:0 14px;
+  border-bottom:1px solid #eee;
+  touch-action: none;
+  user-select: none;
+}
+#topBarText{font-weight:600; color:var(--accent); font-size:16px;}
+
+/* Feed: fills remainder, scrollable */
+.feed{
+  /* let the page (body) handle scrolling so each card keeps its exact 9:9 size */
+  padding:14px;
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+  padding-bottom:28px;
+}
+
+/* Each card is 9:9 (square-ish) - implement via aspect-ratio 9/9 = 1:1 */
+.card{
+  width:100%;
+  aspect-ratio:9/9;
+  background:#fafafa;
+  border-radius:8px;
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+  box-shadow:0 1px 3px rgba(0,0,0,0.06);
+}
+
+/* image area inside card: take the top area — we'll allocate 8/9 of vertical space to image,
+   leaving 1/9 at bottom for caption (so image area aspect ~9:8 of card width) */
+.card .img-wrap{
+  flex:8 0 0;
+  background:#eee;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  position:relative;
+}
+.card img{
+  width:100%;
+  height:100%;
+  object-fit:cover; /* prevents crossing into caption area */
+  display:block;
+}
+
+/* caption area 1/9 */
+.card .caption{
+  flex:1 0 0;
+  padding:6px 10px;
+  display:flex;
+  align-items:center;
+  border-top:1px solid #f0f0f0;
+  font-size:14px;
+  color:var(--muted);
+  background:#fff;
+}
+
+/* Upload screen */
+.upload-screen{align-items:stretch; padding-top:12px}
+.upload-header{ text-align:center; font-weight:600; margin-bottom:12px; color:var(--accent) }
+
+/* Center area with upload box */
+.upload-center{display:flex;flex-direction:column;align-items:center;gap:12px;padding:12px;flex:1;justify-content:flex-start}
+.upload-box{
+  width:calc(100% - 48px);
+  max-width:420px;
+  aspect-ratio:5/5;
+  background:#fafafa;
+  border:2px dashed #ddd;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  border-radius:10px;
+  overflow:hidden;
+}
+.upload-preview{color:#999;text-align:center;padding:8px}
+.confirm-btn{
+  width:calc(100% - 48px);
+  max-width:420px;
+  aspect-ratio:7/1;
+  background:#111;
+  color:#fff;
+  border:none;
+  border-radius:8px;
+  font-weight:600;
+}
+.caption-input{
+  width:calc(100% - 48px);
+  max-width:420px;
+  aspect-ratio:7/1;
+  padding:8px 12px;
+  border-radius:8px;
+  border:1px solid #ddd;
+  font-size:15px;
+}
+.upload-status{font-size:13px;color:var(--muted);margin-top:6px}
+
+/* small responsive tweaks */
+@media(min-width:720px){
+  .feed{padding:18px}
+}
+
+/* Fullscreen viewer styles */
+.fullview{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.92);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:9999;
+  flex-direction:column;
+  padding:18px;
+}
+.fullview.hidden{display:none}
+.full-image-wrap{
+  width:100%;
+  max-width:1100px;
+  height:100%;
+  max-height:calc(100vh - 140px);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  position:relative;
+}
+.full-image-wrap img{
+  max-width:100%;
+  max-height:100%;
+  object-fit:contain;
+  display:block;
+  border-radius:6px;
+  box-shadow:0 6px 24px rgba(0,0,0,0.6);
+}
+
+/* caption overlay at bottom of image area */
+.full-caption{
+  position:absolute;
+  left:12px;
+  right:12px;
+  bottom:8px;
+  background:linear-gradient(transparent, rgba(0,0,0,0.4));
+  color:#fff;
+  padding:10px 14px;
+  border-radius:6px;
+  font-size:16px;
+  text-align:left;
+  pointer-events:none;
+}
+
+/* top-left back button */
+.full-back{
+  position:absolute;
+  left:12px;
+  top:12px;
+  background:rgba(255,255,255,0.08);
+  color:#fff;
+  border:none;
+  padding:8px 12px;
+  border-radius:6px;
+  font-size:20px;
+  z-index:10000;
+}
+
+/* top-right save button */
+.save-btn{
+  position:absolute;
+  right:12px;
+  top:12px;
+  background:#fff;
+  color:#111;
+  border:none;
+  padding:8px 14px;
+  border-radius:6px;
+  font-weight:600;
+  z-index:10000;
+}
+
+/* shopping cart button shown inside full view (center-right) */
+.full-cart-btn{
+  position:absolute;
+  right:18px;
+  top:50%;
+  transform:translateY(-50%);
+  background:rgba(255,255,255,0.95);
+  border:none;
+  padding:10px 12px;
+  border-radius:10px;
+  font-size:20px;
+  z-index:10001;
+  cursor:pointer;
+  box-shadow:0 6px 18px rgba(0,0,0,0.18);
+}
+
+/* Floating circular overlay (1:1) shown on main feed near bottom-right */
+.floating-circle{
+  position:fixed;
+  right:16px;
+  /* place just above bottom bar: bottom = bottom bar height + small gap */
+  bottom: calc((100vw / 9) + 18px);
+  width: min(120px, 18vw);
+  aspect-ratio:1/1;
+  border-radius:50%;
+  overflow:hidden;
+  background:#fff;
+  box-shadow:0 8px 26px rgba(0,0,0,0.18);
+  z-index:9997;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+}
+.floating-circle img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+  border-radius:50%;
+}
+
+/* Bottom fixed 9:1 bar */
+.bottom-bar{
+  position:fixed;
+  left:0;
+  right:0;
+  bottom:0;
+  height:calc(100vw / 9); /* 9:1 relative to width */
+  max-height:72px;
+  background:#fff;
+  border-top:1px solid #eee;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:9998;
+  box-shadow: 0 -6px 18px rgba(0,0,0,0.03);
+}
+.bottom-inner{
+  width:100%;
+  max-width:720px;
+  padding:0 14px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+}
+.bottom-btn{
+  flex:1 1 0;
+  height:calc((100vw / 9) * 0.78);
+  max-height:54px;
+  background:transparent;
+  border:none;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  border-radius:8px;
+  font-weight:700;
+  font-size:18px;
+  color:var(--accent);
+  background:linear-gradient(#fff, #fff);
+  box-shadow: none;
+}
+.bottom-seg{
+  background:#fff;
+  border:1px solid #eee;
+}
+.icon{
+  width:28px;
+  height:28px;
+  filter:grayscale(100%);
+}
+
+/* Cart feed: show squares of 4:4 (square) aligned left */
+.cart-screen .feed{
+  padding:14px;
+  display:flex;
+  flex-direction:row;
+  flex-wrap:wrap;
+  gap:12px;
+  align-content:flex-start;
+  overflow:auto;
+  padding-bottom:80px;
+}
+.cart-item{
+  width:calc((100% - 36px) / 2); /* two per row on narrow screens */
+  aspect-ratio:4/4;
+  background:#fafafa;
+  border-radius:8px;
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.cart-item img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+}
+@media(min-width:520px){
+  .cart-item{ width:calc((100% - 48px) / 3); } /* 3 per row on larger screens */
+}
+/* simple black/white home icon using CSS */
+.home-icon{
+  background:
+    linear-gradient(#111 0 0) center/60% 12% no-repeat,
+    linear-gradient(#111 0 0) center/12% 60% no-repeat,
+    linear-gradient(#111 0 0) center/30% 30% no-repeat;
+  mask:
+    linear-gradient(#000 0 0) content-box;
+  background-color:transparent;
+  position:relative;
+}
+/* simple search icon drawn with border and circle */
+.search-icon{
+  position:relative;
+  border-radius:50%;
+  box-shadow: inset 0 0 0 3px #111;
+}
+.search-icon::after{
+  content:'';
+  position:absolute;
+  right:-6px;
+  bottom:-6px;
+  width:10px;
+  height:3px;
+  background:#111;
+  transform:rotate(-40deg);
+  border-radius:2px;
+}
+
+/* Search top bar input (9:1) */
+.search-topbar{ padding:0 14px; }
+.search-input{
+  width:100%;
+  height:100%;
+  border:none;
+  outline:none;
+  font-size:16px;
+  font-weight:600;
+  background:transparent;
+  padding:6px 8px;
+}
+
+/* Highlight style for matched text */
+.highlight{
+  color:#c00;
+  font-weight:700;
+}
+
+/* Filo screen styles */
+.filo-screen{align-items:flex-start;justify-content:flex-start;padding-top:18px}
+.filo-title{
+  width:100%;
+  text-align:center;
+  font-weight:700;
+  font-size:20px;
+  padding:8px 14px;
+  color:var(--accent);
+}
+.filo-chat{
+  width:100%;
+  padding:14px;
+  flex:1 1 auto;
+  overflow:auto;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  align-items:flex-start;
+}
+.filo-bubble{
+  max-width:78%;
+  padding:10px 12px;
+  border-radius:12px;
+  font-size:15px;
+  line-height:1.2;
+}
+
+/* Like UI inside each card (placed under the caption, left aligned) */
+.card .like-row{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:6px 10px 10px 10px;
+  font-size:13px;
+  color:var(--muted);
+}
+.card .like-count{
+  font-weight:600;
+  color:var(--accent);
+}
+.card .like-btn{
+  margin-left:auto;
+  background:transparent;
+  border:none;
+  font-size:18px;
+  cursor:pointer;
+  color:#c33;
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+.card .like-btn.liked{
+  filter:brightness(1.05);
+  transform:scale(1.02);
+}
+.filo-agent{
+  background:#f0f0f0;
+  color:#111;
+  align-self:flex-start;
+  border-top-left-radius:6px;
+}
+.filo-user{
+  background:#111;
+  color:#fff;
+  align-self:flex-end;
+  border-top-right-radius:6px;
+}
+
+/* Make the back arrow black on the Filo AI screen specifically */
+.filo-screen .full-back{
+  color: #111;
+  background: transparent;
+}
+
+/* bottom curved 9:1 input */
+.filo-bottom-bar{
+  position:fixed;
+  left:0;
+  right:0;
+  bottom:0;
+  height:calc(100vw / 9);
+  max-height:72px;
+  background:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:9999;
+  box-shadow: 0 -6px 18px rgba(0,0,0,0.03);
+  border-top-left-radius:22px;
+  border-top-right-radius:22px;
+}
+.filo-input-wrap{
+  width:100%;
+  max-width:720px;
+  padding:8px 16px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.filo-input{
+  flex:1 1 auto;
+  height:calc((100vw / 9) * 0.7);
+  border-radius:999px;
+  padding:10px 14px;
+  border:1px solid #eee;
+  font-size:15px;
+}
+.filo-send{
+  background:transparent;
+  border:none;
+  font-size:20px;
+  padding:6px 8px;
+  cursor:pointer;
+}
